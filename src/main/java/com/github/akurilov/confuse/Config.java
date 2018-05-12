@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public interface ExtensibleConfig
+public interface Config
 extends Serializable {
 
 	/** Returns the path separator **/

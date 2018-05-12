@@ -15,14 +15,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public final class ExtensibleConfigJsonSerializerTest {
+public final class ConfigJsonSerializerTest {
 
-	private static ObjectWriter getObjectWriter() {
+	private static ObjectWriter jsonWriter() {
 		final Module jacksonModule = new SimpleModule()
-			.addSerializer(
-				ExtensibleConfig.class,
-				new ExtensibleConfigJsonSerializer(ExtensibleConfig.class)
-			);
+			.addSerializer(Config.class, new ConfigJsonSerializer(Config.class));
 		final ObjectMapper jacksonMapper = new ObjectMapper()
 			.registerModule(jacksonModule)
 			.enable(SerializationFeature.INDENT_OUTPUT);
@@ -38,9 +35,9 @@ public final class ExtensibleConfigJsonSerializerTest {
 	@Test
 	public final void arrayValueTest()
 	throws Exception {
-		final ExtensibleConfig config = new BasicExtensibleConfig("-");
+		final Config config = new BasicExtensibleConfig("-");
 		config.val("a", Arrays.asList(1L, "2", 3, 4.0));
-		final String actualJsonData = getObjectWriter().writeValueAsString(config);
+		final String actualJsonData = jsonWriter().writeValueAsString(config);
 		final String expectedJsonData = "{\n" +
 			"\t\"a\" : [\n" +
 			"\t\t1,\n" +
@@ -55,7 +52,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 	@Test
 	public final void mapValueTest()
 	throws Exception {
-		final ExtensibleConfig config = new BasicExtensibleConfig("-");
+		final Config config = new BasicExtensibleConfig("-");
 		config.val(
 			"a",
 			new HashMap<String, Object>() {{
@@ -70,7 +67,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 				);
 			}}
 		);
-		final String actualJsonData = getObjectWriter().writeValueAsString(config);
+		final String actualJsonData = jsonWriter().writeValueAsString(config);
 		final String expectedJsonData = "{\n" +
 			"\t\"a\" : {\n" +
 			"\t\t\"bb\" : 123,\n" +
@@ -88,7 +85,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 	public final void nullValuesTest()
 	throws Exception {
 
-		final ExtensibleConfig config = new BasicExtensibleConfig("-");
+		final Config config = new BasicExtensibleConfig("-");
 		config.val("a", null);
 		config.val("b-aa", Arrays.asList(null, null));
 		config.val(
@@ -99,7 +96,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 			}}
 		);
 
-		final String actualJsonData = getObjectWriter().writeValueAsString(config);
+		final String actualJsonData = jsonWriter().writeValueAsString(config);
 		final String expectedJsonData = "{\n" +
 			"\t\"a\" : null,\n" +
 			"\t\"b\" : {\n" +
@@ -121,7 +118,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 	@Test
 	public final void numValuesTest()
 	throws Exception {
-		final ExtensibleConfig config = new BasicExtensibleConfig("-");
+		final Config config = new BasicExtensibleConfig("-");
 		config.val("a", -1.234);
 		config.val("b", 5);
 		config.val("c", Long.MAX_VALUE);
@@ -131,7 +128,7 @@ public final class ExtensibleConfigJsonSerializerTest {
 		config.val("g", Double.POSITIVE_INFINITY);
 		config.val("i", new BigDecimal("+1234567890E+1234567890"));
 
-		final String actualJsonData = getObjectWriter().writeValueAsString(config);
+		final String actualJsonData = jsonWriter().writeValueAsString(config);
 		final String expectedJsonData = "{\n" +
 			"\t\"a\" : -1.234,\n" +
 			"\t\"b\" : 5,\n" +

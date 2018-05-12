@@ -1,30 +1,47 @@
 package com.github.akurilov.confuse;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 public final class BasicExtensibleConfig
-implements ExtensibleConfig {
+implements Config {
 
 	private final String pathSep;
 	private final Map<String, Object> node;
 
 	public BasicExtensibleConfig(final String pathSep) {
-		this(pathSep, new HashMap<>());
+		this(pathSep, Collections.emptyMap());
 	}
 
+	@SuppressWarnings("unchecked")
 	public BasicExtensibleConfig(final String pathSep, final Map<String, Object> node) {
 		this.pathSep = pathSep;
-		this.node = node;
+		if(node == null || node.size() == 0) {
+			this.node = new HashMap<>();
+		} else {
+			this.node = new HashMap<>(node.size());
+			node.forEach(
+				(k, v) -> {
+					if(v instanceof Map) {
+						this.node.put(
+							k, new BasicExtensibleConfig(pathSep, (Map<String, Object>) v)
+						);
+					} else {
+						this.node.put(k, v);
+					}
+				}
+			);
+		}
 	}
 
 	/**
 	 Cloning constructor
 	 @param other the config instance to clone
 	 */
-	public BasicExtensibleConfig(final ExtensibleConfig other) {
+	public BasicExtensibleConfig(final Config other) {
 		this.pathSep = other.pathSep();
 		final Map<String, Object> otherNode = other.mapVal("");
 		this.node = new HashMap<>(otherNode.size());
@@ -58,9 +75,9 @@ implements ExtensibleConfig {
 			final String key = path.substring(0, sepPos);
 			final String subPath = path.substring(sepPos + 1);
 			final Object child = node.get(key);
-			if(child instanceof ExtensibleConfig) {
+			if(child instanceof Config) {
 				try {
-					return ((ExtensibleConfig) child).val(subPath);
+					return ((Config) child).val(subPath);
 				} catch(final InvalidValuePathException e) {
 					throw new InvalidValuePathException(key + pathSep + e.getMessage());
 				} catch(final NoSuchElementException e) {
@@ -85,9 +102,9 @@ implements ExtensibleConfig {
 			final String key = path.substring(0, sepPos);
 			final String subPath = path.substring(sepPos + 1);
 			final Object child = node.get(key);
-			final ExtensibleConfig childConfig;
-			if(child instanceof ExtensibleConfig) {
-				childConfig = (ExtensibleConfig) child;
+			final Config childConfig;
+			if(child instanceof Config) {
+				childConfig = (Config) child;
 			} else {
 				childConfig = new BasicExtensibleConfig(pathSep);
 				node.put(key, childConfig);
@@ -168,10 +185,14 @@ implements ExtensibleConfig {
 	public final <V> Map<String, V> mapVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException {
 		final Object v = val(path);
-		try {
-			return (Map<String, V>) v;
-		} catch(final ClassCastException e) {
-			throw new InvalidValueTypeException(path, Map.class, v.getClass());
+		if(v instanceof Config) {
+			return ((Config) v).mapVal("");
+		} else {
+			try {
+				return (Map<String, V>) v;
+			} catch(final ClassCastException e) {
+				throw new InvalidValueTypeException(path, Map.class, v.getClass());
+			}
 		}
 	}
 

@@ -16,7 +16,7 @@ public class BasicExtensibleConfigTest {
 	public final void testClone()
 	throws Exception {
 
-		final ExtensibleConfig src = new BasicExtensibleConfig("-");
+		final Config src = new BasicExtensibleConfig("-");
 		src.val("a", null);
 		src.val("b-b", "stringvalue");
 		src.val("c-c-c", 42);
@@ -31,7 +31,7 @@ public class BasicExtensibleConfigTest {
 			}}
 		);
 
-		final ExtensibleConfig dst = new BasicExtensibleConfig(src);
+		final Config dst = new BasicExtensibleConfig(src);
 
 		assertEquals(src.val("a"), dst.val("a"));
 		assertEquals(src.stringVal("b-b"), dst.stringVal("b-b"));
@@ -46,7 +46,7 @@ public class BasicExtensibleConfigTest {
 	public final void testEquals()
 	throws Exception {
 
-		final ExtensibleConfig src = new BasicExtensibleConfig("-");
+		final Config src = new BasicExtensibleConfig("-");
 		src.val("a", null);
 		src.val("b-b", "stringvalue");
 		src.val("c-c-c", 42);
@@ -61,7 +61,7 @@ public class BasicExtensibleConfigTest {
 			}}
 		);
 
-		final ExtensibleConfig dst = new BasicExtensibleConfig(src);
+		final Config dst = new BasicExtensibleConfig(src);
 
 		assertEquals(src, dst);
 	}
@@ -70,7 +70,7 @@ public class BasicExtensibleConfigTest {
 	public final void testNotEquals()
 	throws Exception {
 
-		final ExtensibleConfig src = new BasicExtensibleConfig("-");
+		final Config src = new BasicExtensibleConfig("-");
 		src.val("a", null);
 		src.val("b-b", "stringvalue");
 		src.val("c-c-c", 42);
@@ -85,7 +85,7 @@ public class BasicExtensibleConfigTest {
 			}}
 		);
 
-		final ExtensibleConfig dst = new BasicExtensibleConfig(src);
+		final Config dst = new BasicExtensibleConfig(src);
 		dst.val("e-e", true);
 
 		assertNotEquals(src, dst);
@@ -95,7 +95,7 @@ public class BasicExtensibleConfigTest {
 	public final void testInvalidValuePath()
 	throws Exception {
 
-		final ExtensibleConfig src = new BasicExtensibleConfig("-");
+		final Config src = new BasicExtensibleConfig("-");
 		src.val("a", "b");
 		final String invalidValPath = "a-";
 		try {
@@ -110,7 +110,7 @@ public class BasicExtensibleConfigTest {
 	public final void testNoSuchElement()
 	throws Exception {
 
-		final ExtensibleConfig src = new BasicExtensibleConfig("-");
+		final Config src = new BasicExtensibleConfig("-");
 		src.val("foo", true);
 		src.val("bar", null);
 

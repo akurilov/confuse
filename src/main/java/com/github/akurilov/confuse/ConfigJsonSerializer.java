@@ -9,16 +9,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public final class ExtensibleConfigJsonSerializer
-extends StdSerializer<ExtensibleConfig> {
+public final class ConfigJsonSerializer
+extends StdSerializer<Config> {
 
-	public ExtensibleConfigJsonSerializer(final Class<ExtensibleConfig> t) {
+	public ConfigJsonSerializer(final Class<Config> t) {
 		super(t);
 	}
 
 	@Override
 	public final void serialize(
-		final ExtensibleConfig value, final JsonGenerator gen, final SerializerProvider provider
+		final Config value, final JsonGenerator gen, final SerializerProvider provider
 	) throws IOException {
 		gen.writeStartObject();
 		final Map<String, Object> valueAsMap = value.mapVal("");
