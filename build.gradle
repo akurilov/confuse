@@ -1,4 +1,4 @@
-description = "Dynamically extensible but safe and serializable configuration for an application"
+description = "Safe, dynamically extensible and serializable configuration for an application"
 
 buildscript {
 	repositories {

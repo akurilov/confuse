@@ -1,5 +1,8 @@
 package com.github.akurilov.confuse;
 
+import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
+import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +11,13 @@ import java.util.NoSuchElementException;
 public interface Config
 extends Serializable {
 
+	String ROOT_PATH = "";
+
 	/** Returns the path separator **/
 	String pathSep();
+
+	/** Returns the validation schema **/
+	Map<String, Object> schema();
 
 	/**
 	 * Get the val
@@ -28,7 +36,7 @@ extends Serializable {
 	 * @throws InvalidValuePathException if the path is not valid
 	 */
 	void val(final String path, final Object val)
-	throws InvalidValuePathException;
+	throws InvalidValuePathException, InvalidValueTypeException;
 
 	String stringVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException;
