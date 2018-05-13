@@ -7,9 +7,11 @@ public interface SchemaProvider {
 
 	String id();
 
-	Map<String, Object> schema();
+	Map<String, Object> schema()
+	throws Exception;
 
-	static Map<String, Object> resolve(final String id, final ClassLoader clsLoader) {
+	static Map<String, Object> resolve(final String id, final ClassLoader clsLoader)
+	throws Exception {
 		final ServiceLoader<SchemaProvider> loader = ServiceLoader.load(
 			SchemaProvider.class, clsLoader
 		);

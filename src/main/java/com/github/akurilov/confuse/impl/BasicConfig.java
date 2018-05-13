@@ -234,11 +234,54 @@ implements Config {
 	}
 
 	@Override
+	public char charVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException {
+		final Object v = val(path);
+		try {
+			return (char) v;
+		} catch(final ClassCastException e) {
+			throw new InvalidValueTypeException(path, Character.TYPE, v.getClass());
+		}
+	}
+
+	@Override
+	public byte byteVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException {
+		final Object v = val(path);
+		if(v instanceof String) {
+			return Byte.parseByte((String) v);
+		} else {
+			try {
+				return (byte) v;
+			} catch(final ClassCastException e) {
+				throw new InvalidValueTypeException(path, Byte.TYPE, v.getClass());
+			}
+		}
+	}
+
+	@Override
+	public short shortVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException {
+		final Object v = val(path);
+		if(v instanceof String) {
+			return Short.parseShort((String) v);
+		} else {
+			try {
+				return (short) v;
+			} catch(final ClassCastException e) {
+				throw new InvalidValueTypeException(path, Short.TYPE, v.getClass());
+			}
+		}
+	}
+
+	@Override
 	public int intVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
 		if(v instanceof String) {
 			return Integer.parseInt((String) v);
+		} else if(v instanceof Short) {
+			return (short) v;
 		} else {
 			try {
 				return (int) v;
@@ -263,6 +306,21 @@ implements Config {
 				return (long) v;
 			} catch(final ClassCastException e) {
 				throw new InvalidValueTypeException(path, Long.TYPE, v.getClass());
+			}
+		}
+	}
+
+	@Override
+	public float floatVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException {
+		final Object v = val(path);
+		if(v instanceof String) {
+			return Float.parseFloat((String) v);
+		} else {
+			try {
+				return (float) v;
+			} catch(final ClassCastException e) {
+				throw new InvalidValueTypeException(path, Float.TYPE, v.getClass());
 			}
 		}
 	}

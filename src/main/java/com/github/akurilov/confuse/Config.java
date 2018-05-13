@@ -44,11 +44,23 @@ extends Serializable {
 	boolean boolVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException;
 
+	char charVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException;
+
+	byte byteVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException;
+
+	short shortVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException;
+
 	int intVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException;
 
 	long longVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException;
+
+	float floatVal(final String path)
+	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException;
 
 	double doubleVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException;
