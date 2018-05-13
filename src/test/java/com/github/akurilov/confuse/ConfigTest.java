@@ -176,6 +176,7 @@ public class ConfigTest {
 		final String missingValPath = "bar-foo";
 		try {
 			src.val("bar-foo");
+			fail();
 		} catch(final NoSuchElementException e) {
 			assertEquals(missingValPath, e.getMessage());
 		}
@@ -309,6 +310,7 @@ public class ConfigTest {
 
 		try {
 			config.val("lzx", new HashMap<String, Object>());
+			fail();
 		} catch(final InvalidValuePathException e) {
 			assertEquals("lzx", e.path());
 		}
@@ -330,6 +332,7 @@ public class ConfigTest {
 
 		try {
 			config.val("abc", 42L);
+			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("abc", e.path());
 			assertEquals(int.class, e.expectedType());
@@ -338,6 +341,7 @@ public class ConfigTest {
 
 		try {
 			config.val("def", null);
+			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("def", e.path());
 			assertEquals(long.class, e.expectedType());
@@ -346,6 +350,7 @@ public class ConfigTest {
 
 		try {
 			config.val("ghi", Math.PI);
+			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("ghi", e.path());
 			assertEquals(float.class, e.expectedType());
@@ -354,6 +359,7 @@ public class ConfigTest {
 
 		try {
 			config.val("jkl", 0x10);
+			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("jkl", e.path());
 			assertEquals(byte.class, e.expectedType());
@@ -362,6 +368,7 @@ public class ConfigTest {
 
 		try {
 			config.val("mno", new ArrayList<>());
+			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("mno", e.path());
 			assertEquals(String.class, e.expectedType());
