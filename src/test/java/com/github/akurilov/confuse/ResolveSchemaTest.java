@@ -19,7 +19,7 @@ public class ResolveSchemaTest {
 	public final void testValidValues()
 	throws Exception {
 
-		final Map<String, Object> schema = SchemaProvider.resolve(
+		final Map<String, Object> schema = SchemaProvider.resolveAndReduce(
 			"test", Thread.currentThread().getContextClassLoader()
 		);
 		assertNotNull(schema);
@@ -44,7 +44,7 @@ public class ResolveSchemaTest {
 	public final void testInvalidValues()
 	throws Exception {
 
-		final Map<String, Object> schema = SchemaProvider.resolve(
+		final Map<String, Object> schema = SchemaProvider.resolveAndReduce(
 			"test", Thread.currentThread().getContextClassLoader()
 		);
 		assertNotNull(schema);

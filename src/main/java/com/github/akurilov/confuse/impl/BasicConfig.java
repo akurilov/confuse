@@ -4,7 +4,7 @@ import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 
-import static com.github.akurilov.commons.collection.Util.deepCopyTree;
+import static com.github.akurilov.commons.collection.TreeUtil.copyTree;
 import static com.github.akurilov.commons.reflection.TypeUtil.typeEquals;
 
 import java.util.Collections;
@@ -33,7 +33,7 @@ implements Config {
 			throw new IllegalArgumentException("Path separator should not be null/empty");
 		}
 		this.pathSep = pathSep;
-		this.schema = deepCopyTree(schema);
+		this.schema = copyTree(schema);
 		if(node == null || node.size() == 0) {
 			this.node = new HashMap<>();
 		} else {
