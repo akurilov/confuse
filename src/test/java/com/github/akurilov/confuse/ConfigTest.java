@@ -375,4 +375,14 @@ public class ConfigTest {
 			assertEquals(ArrayList.class, e.actualType());
 		}
 	}
+
+	@Test
+	public final void testTypeCast()
+	throws Exception {
+		final Map<String, Object> schema = new HashMap<String, Object>() {{
+			put("a", double.class);
+		}};
+		final Config config = new BasicConfig("-", schema);
+		config.val("a", 42);
+	}
 }
