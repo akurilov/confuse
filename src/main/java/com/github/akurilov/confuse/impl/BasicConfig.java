@@ -4,6 +4,9 @@ import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 
+import static com.github.akurilov.commons.collection.Util.deepCopyTree;
+import static com.github.akurilov.commons.reflection.TypeUtil.typeEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,22 +33,13 @@ implements Config {
 			throw new IllegalArgumentException("Path separator should not be null/empty");
 		}
 		this.pathSep = pathSep;
-		this.schema = deepCopyMap(schema);
+		this.schema = deepCopyTree(schema);
 		if(node == null || node.size() == 0) {
 			this.node = new HashMap<>();
 		} else {
 			this.node = new HashMap<>(node.size());
 			node.forEach(this::putBranch);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static Map<String, Object> deepCopyMap(final Map<String, Object> src) {
-		final Map<String, Object> dst = new HashMap<>(src.size());
-		src.forEach(
-			(k, v) -> dst.put(k, v instanceof Class ? v : deepCopyMap((Map<String, Object>) v))
-		);
-		return dst;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,14 +82,8 @@ implements Config {
 					throw new InvalidValueTypeException(key, expectedValType, actualValType);
 				}
 			} else {
-				try {
-					if(!expectedValType.equals(actualValType.getField("TYPE").get(null))) {
-						throw new InvalidValueTypeException(key, expectedValType, actualValType);
-					}
-				} catch(final NoSuchFieldException e) {
+				if(!typeEquals(expectedValType, actualValType)) {
 					throw new InvalidValueTypeException(key, expectedValType, actualValType);
-				} catch(final IllegalAccessException e) {
-					throw new AssertionError(e);
 				}
 			}
 			node.put(key, val);
@@ -184,9 +172,7 @@ implements Config {
 				if(child instanceof Config) {
 					childConfig = (Config) child;
 				} else {
-					childConfig = new BasicConfig(
-						pathSep, (Map<String, Object>) schemaVal
-					);
+					childConfig = new BasicConfig(pathSep, (Map<String, Object>) schemaVal);
 					node.put(key, childConfig);
 				}
 				childConfig.val(childPath, val);
