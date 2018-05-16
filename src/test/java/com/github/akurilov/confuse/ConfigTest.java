@@ -331,7 +331,7 @@ public class ConfigTest {
 		final Config config = new BasicConfig("-", schema);
 
 		try {
-			config.val("abc", 42L);
+			config.val("abc", Long.MAX_VALUE);
 			fail();
 		} catch(final InvalidValueTypeException e) {
 			assertEquals("abc", e.path());

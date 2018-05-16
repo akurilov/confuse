@@ -5,6 +5,7 @@ import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 
 import static com.github.akurilov.commons.collection.TreeUtil.copyTree;
+import static com.github.akurilov.commons.reflection.TypeUtil.typeConvert;
 import static com.github.akurilov.commons.reflection.TypeUtil.typeEquals;
 
 import java.util.Collections;
@@ -72,26 +73,22 @@ implements Config {
 
 	protected void putLeaf(final String key, final Class expectedValType, final Object val)
 	throws InvalidValuePathException, InvalidValueTypeException {
-		if(expectedValType.isPrimitive()) {
-			if(val == null) {
+		if(val == null) {
+			if(expectedValType.isPrimitive()) {
 				throw new InvalidValueTypeException(key, expectedValType, null);
-			}
-			final Class actualValType = val.getClass();
-			if(actualValType.isPrimitive()) {
-				if(!expectedValType.equals(actualValType)) {
-					throw new InvalidValueTypeException(key, expectedValType, actualValType);
-				}
 			} else {
-				if(!typeEquals(expectedValType, actualValType)) {
+				node.put(key, val);
+			}
+		} else {
+			final Class actualValType = val.getClass();
+			if(typeEquals(expectedValType, actualValType)) {
+				node.put(key, val);
+			} else {
+				try {
+					node.put(key, typeConvert(val, expectedValType));
+				} catch(final ClassCastException e) {
 					throw new InvalidValueTypeException(key, expectedValType, actualValType);
 				}
-			}
-			node.put(key, val);
-		} else {
-			try {
-				node.put(key, expectedValType.cast(val));
-			} catch(final ClassCastException e) {
-				throw new InvalidValueTypeException(key, expectedValType, val.getClass());
 			}
 		}
 	}
