@@ -352,6 +352,12 @@ implements Config {
 	}
 
 	@Override
+	public Config configVal(final String path)
+	throws InvalidValuePathException, InvalidValueTypeException {
+		return (Config) val(path);
+	}
+
+	@Override
 	public boolean equals(final Object o) {
 		if(o == null) {
 			return false;

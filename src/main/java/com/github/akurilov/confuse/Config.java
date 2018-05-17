@@ -70,4 +70,7 @@ extends Serializable {
 
 	<E> List<E> listVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException;
+
+	Config configVal(final String path)
+	throws InvalidValuePathException, InvalidValueTypeException;
 }
