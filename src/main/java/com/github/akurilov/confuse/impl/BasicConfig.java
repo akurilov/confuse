@@ -198,7 +198,7 @@ implements Config {
 	@Override
 	public String stringVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException {
-		return val(path).toString();
+		return (String) val(path);
 	}
 
 	@Override
