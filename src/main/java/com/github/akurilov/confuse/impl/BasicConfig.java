@@ -205,7 +205,9 @@ implements Config {
 	public boolean boolVal(final String path)
 	throws InvalidValuePathException, InvalidValueTypeException, NoSuchElementException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Boolean.TYPE, null);
+		} else if(v instanceof String) {
 			return Boolean.parseBoolean((String) v);
 		} else {
 			try {
@@ -220,6 +222,9 @@ implements Config {
 	public char charVal(final String path)
 	throws InvalidValueTypeException, NoSuchElementException {
 		final Object v = val(path);
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Character.TYPE, null);
+		}
 		try {
 			return (char) v;
 		} catch(final ClassCastException e) {
@@ -231,7 +236,9 @@ implements Config {
 	public byte byteVal(final String path)
 	throws InvalidValueTypeException, NoSuchElementException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Byte.TYPE, null);
+		} else if(v instanceof String) {
 			return Byte.parseByte((String) v);
 		} else {
 			try {
@@ -246,7 +253,9 @@ implements Config {
 	public short shortVal(final String path)
 	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Short.TYPE, null);
+		} else if(v instanceof String) {
 			return Short.parseShort((String) v);
 		} else {
 			try {
@@ -261,7 +270,9 @@ implements Config {
 	public int intVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Integer.TYPE, null);
+		} else if(v instanceof String) {
 			return Integer.parseInt((String) v);
 		} else if(v instanceof Short) {
 			return (short) v;
@@ -278,7 +289,9 @@ implements Config {
 	public long longVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Long.TYPE, null);
+		} else if(v instanceof String) {
 			return Long.parseLong((String) v);
 		} else if(v instanceof Short) {
 			return (short) v;
@@ -297,7 +310,9 @@ implements Config {
 	public float floatVal(final String path)
 	throws InvalidValueTypeException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Float.TYPE, null);
+		} else if(v instanceof String) {
 			return Float.parseFloat((String) v);
 		} else {
 			try {
@@ -312,7 +327,9 @@ implements Config {
 	public double doubleVal(final String path)
 	throws InvalidValuePathException, NoSuchElementException, NumberFormatException {
 		final Object v = val(path);
-		if(v instanceof String) {
+		if(v == null) {
+			throw new InvalidValueTypeException(path, Double.TYPE, null);
+		} else if(v instanceof String) {
 			return Double.parseDouble((String) v);
 		} else if(v instanceof Float) {
 			return (float) v;
