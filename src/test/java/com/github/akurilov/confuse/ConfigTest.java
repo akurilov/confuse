@@ -385,4 +385,33 @@ public class ConfigTest {
 		final Config config = new BasicConfig("-", schema);
 		config.val("a", 42);
 	}
+
+	@Test
+	public final void testDeepToMap()
+	throws Exception {
+
+		final Config src = new BasicConfig("-", SCHEMA);
+		src.val("a", null);
+		src.val("b-b", "stringvalue");
+		src.val("c-c-c", 42);
+		src.val("d", 3.1415926);
+		src.val("e-e", false);
+		src.val("f-f-f", Arrays.asList("foo", "bar", 123, null));
+		src.val(
+			"g",
+			new HashMap<String, String>() {{
+				put("foo", "bar");
+				put("hello", "world");
+			}}
+		);
+
+		final Map<String, Object> dst = Config.deepToMap(src);
+		assertEquals(src.val("a"), dst.get("a"));
+		assertEquals(src.stringVal("b-b"), ((Map) dst.get("b")).get("b"));
+		assertEquals(src.intVal("c-c-c"), ((Map) ((Map) dst.get("c")).get("c")).get("c"));
+		assertEquals(src.doubleVal("d"), (Double) dst.get("d"), 0);
+		assertEquals(src.boolVal("e-e"), ((Map) dst.get("e")).get("e"));
+		assertEquals(src.listVal("f-f-f"), ((Map) ((Map) dst.get("f")).get("f")).get("f"));
+		assertEquals(src.mapVal("g"), dst.get("g"));
+	}
 }

@@ -4,6 +4,7 @@ import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -73,4 +74,17 @@ extends Serializable {
 
 	Config configVal(final String path)
 	throws InvalidValuePathException, InvalidValueTypeException;
+
+	@SuppressWarnings("unchecked")
+	static Map<String, Object> deepToMap(final Config config) {
+		final Map<String, Object> dstMap = new HashMap<>();
+		config
+			.mapVal(ROOT_PATH)
+			.forEach(
+				(key, val) -> dstMap.put(
+					key, val instanceof Config ? deepToMap((Config) val) : val
+				)
+			);
+		return dstMap;
+	}
 }
