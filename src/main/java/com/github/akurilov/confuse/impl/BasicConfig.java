@@ -45,14 +45,34 @@ implements Config {
 
 	@SuppressWarnings("unchecked")
 	private void putBranch(final String key, final Object val)
-	throws InvalidValuePathException, InvalidValueTypeException, IllegalArgumentException {
+	throws InvalidValuePathException, InvalidValueTypeException {
 		final Object schemaVal = schema.get(key);
 		if(schemaVal instanceof Map) {
-			putBranch(key, (Map<String, Object>) schemaVal, val);
+			try {
+				putBranch(key, (Map<String, Object>) schemaVal, val);
+			} catch(final InvalidValuePathException e) {
+				throw new InvalidValuePathException(key + pathSep + e.path());
+			} catch(final InvalidValueTypeException e) {
+				throw new InvalidValueTypeException(
+					key + pathSep + e.path(), e.expectedType(), e.actualType()
+				);
+			}
 		} else if(schemaVal instanceof Class){
-			putLeaf(key, (Class) schemaVal, val);
+			try {
+				putLeaf(key, (Class) schemaVal, val);
+			} catch(final InvalidValuePathException e) {
+				throw new InvalidValuePathException(key + pathSep + e.path());
+			} catch(final InvalidValueTypeException e) {
+				throw new InvalidValueTypeException(
+					key + pathSep + e.path(), e.expectedType(), e.actualType()
+				);
+			}
+		} else if(schemaVal == null) {
+			throw new InvalidValuePathException(key);
 		} else {
-			throw new IllegalArgumentException("Schema contains invalid value: " + schemaVal);
+			throw new InvalidValueTypeException(
+				key, schemaVal.getClass(), val == null ? null : val.getClass()
+			);
 		}
 	}
 
