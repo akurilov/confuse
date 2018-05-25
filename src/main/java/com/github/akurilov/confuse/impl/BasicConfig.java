@@ -71,16 +71,16 @@ implements Config {
 		node.put(key, branch);
 	}
 
-	protected void putLeaf(final String key, final Class expectedValType, final Object val)
+	protected void putLeaf(final String key, final Class<?> expectedValType, final Object val)
 	throws InvalidValuePathException, InvalidValueTypeException {
 		if(val == null) {
 			if(expectedValType.isPrimitive()) {
 				throw new InvalidValueTypeException(key, expectedValType, null);
 			} else {
-				node.put(key, val);
+				node.put(key, null);
 			}
 		} else {
-			final Class actualValType = val.getClass();
+			final Class<?> actualValType = val.getClass();
 			if(typeEquals(expectedValType, actualValType)) {
 				node.put(key, val);
 			} else {
@@ -180,6 +180,17 @@ implements Config {
 					key + pathSep + e.path(), e.expectedType(), e.actualType()
 				);
 			}
+		} else if(Map.class.equals(schemaVal)) {
+			final Object prevNodeVal = node.get(key);
+			final Map<String, Object> mapVal;
+			if(prevNodeVal == null) {
+				mapVal = new HashMap<>();
+			} else if(prevNodeVal instanceof Map) {
+				mapVal = (Map<String, Object>) prevNodeVal;
+			} else {
+				throw new InvalidValueTypeException(key, Map.class, prevNodeVal.getClass());
+			}
+			mapVal.put(childPath, val);
 		} else {
 			throw new InvalidValuePathException(key);
 		}

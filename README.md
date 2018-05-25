@@ -19,6 +19,6 @@ application
 ## Gradle
 
 ```groovy
-compile group: 'com.github.akurilov', name: 'confuse', version: '1.1.2'
+compile group: 'com.github.akurilov', name: 'confuse', version: '1.1.3'
 ```
 

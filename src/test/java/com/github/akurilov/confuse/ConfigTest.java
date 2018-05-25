@@ -101,13 +101,8 @@ public class ConfigTest {
 		src.val("d", 3.1415926);
 		src.val("e-e", false);
 		src.val("f-f-f", Arrays.asList("foo", "bar", 123, null));
-		src.val(
-			"g",
-			new HashMap<String, String>() {{
-				put("foo", "bar");
-				put("hello", "world");
-			}}
-		);
+		src.val("g-foo", "bar");
+		src.val("g-hello", "world");
 
 		final Config dst = new BasicConfig(src);
 
