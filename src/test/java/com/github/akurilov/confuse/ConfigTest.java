@@ -81,9 +81,12 @@ public class ConfigTest {
 
 		final Config dst = new BasicConfig(src);
 
-		assertEquals(src.val("a"), dst.val("a"));
+		src.val("a", "a");
+		src.val("c-c-c", 0xCCC);
+
+		assertNull(dst.val("a"));
 		assertEquals(src.stringVal("b-b"), dst.stringVal("b-b"));
-		assertEquals(src.intVal("c-c-c"), dst.intVal("c-c-c"));
+		assertNotEquals(src.intVal("c-c-c"), dst.intVal("c-c-c"));
 		assertEquals(src.doubleVal("d"), dst.doubleVal("d"), 0);
 		assertEquals(src.boolVal("e-e"), dst.boolVal("e-e"));
 		assertEquals(src.listVal("f-f-f"), dst.listVal("f-f-f"));
