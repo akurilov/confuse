@@ -48,6 +48,4 @@ public interface SchemaProvider {
 	throws Exception {
 		return reduceForest(resolve(id, clsLoader));
 	}
-
-
 }
