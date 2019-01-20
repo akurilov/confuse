@@ -45,14 +45,34 @@ implements Config {
 
 	@SuppressWarnings("unchecked")
 	private void putBranch(final String key, final Object val)
-	throws InvalidValuePathException, InvalidValueTypeException, IllegalArgumentException {
+	throws InvalidValuePathException, InvalidValueTypeException {
 		final Object schemaVal = schema.get(key);
 		if(schemaVal instanceof Map) {
-			putBranch(key, (Map<String, Object>) schemaVal, val);
+			try {
+				putBranch(key, (Map<String, Object>) schemaVal, val);
+			} catch(final InvalidValuePathException e) {
+				throw new InvalidValuePathException(key + pathSep + e.path());
+			} catch(final InvalidValueTypeException e) {
+				throw new InvalidValueTypeException(
+					key + pathSep + e.path(), e.expectedType(), e.actualType()
+				);
+			}
 		} else if(schemaVal instanceof Class){
-			putLeaf(key, (Class) schemaVal, val);
+			try {
+				putLeaf(key, (Class) schemaVal, val);
+			} catch(final InvalidValuePathException e) {
+				throw new InvalidValuePathException(key + pathSep + e.path());
+			} catch(final InvalidValueTypeException e) {
+				throw new InvalidValueTypeException(
+					key + pathSep + e.path(), e.expectedType(), e.actualType()
+				);
+			}
+		} else if(schemaVal == null) {
+			throw new InvalidValuePathException(key);
 		} else {
-			throw new IllegalArgumentException("Schema contains invalid value: " + schemaVal);
+			throw new InvalidValueTypeException(
+				key, schemaVal.getClass(), val == null ? null : val.getClass()
+			);
 		}
 	}
 
@@ -71,16 +91,16 @@ implements Config {
 		node.put(key, branch);
 	}
 
-	protected void putLeaf(final String key, final Class expectedValType, final Object val)
+	protected void putLeaf(final String key, final Class<?> expectedValType, final Object val)
 	throws InvalidValuePathException, InvalidValueTypeException {
 		if(val == null) {
 			if(expectedValType.isPrimitive()) {
 				throw new InvalidValueTypeException(key, expectedValType, null);
 			} else {
-				node.put(key, val);
+				node.put(key, null);
 			}
 		} else {
-			final Class actualValType = val.getClass();
+			final Class<?> actualValType = val.getClass();
 			if(typeEquals(expectedValType, actualValType)) {
 				node.put(key, val);
 			} else {
@@ -180,6 +200,17 @@ implements Config {
 					key + pathSep + e.path(), e.expectedType(), e.actualType()
 				);
 			}
+		} else if(Map.class.equals(schemaVal)) {
+			final Object prevNodeVal = node.get(key);
+			final Map<String, Object> mapVal;
+			if(prevNodeVal == null) {
+				mapVal = new HashMap<>();
+			} else if(prevNodeVal instanceof Map) {
+				mapVal = (Map<String, Object>) prevNodeVal;
+			} else {
+				throw new InvalidValueTypeException(key, Map.class, prevNodeVal.getClass());
+			}
+			mapVal.put(childPath, val);
 		} else {
 			throw new InvalidValuePathException(key);
 		}
