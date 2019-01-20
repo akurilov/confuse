@@ -20,43 +20,25 @@ import java.util.NoSuchElementException;
 
 public class ConfigTest {
 
-	private static Map<String, Object> SCHEMA = new HashMap<String, Object>() {{
+	private static Map<String, Object> SCHEMA = new HashMap<>() {{
 		put("a", Object.class);
-		put(
-			"b",
-			new HashMap<String, Object>() {{
-				put("b", String.class);
-			}}
-		);
-		put(
-			"c",
-			new HashMap<String, Object>() {{
-				put(
-					"c",
-					new HashMap<String, Object>() {{
-						put("c", Integer.TYPE);
-					}}
-				);
-			}}
-		);
+		put("b", new HashMap<String, Object>() {{
+			put("b", String.class);
+		}});
+		put("c", new HashMap<String, Object>() {{
+			put("c", new HashMap<String, Object>() {{
+				put("c", Integer.TYPE);
+			}});
+		}});
 		put("d", Double.TYPE);
-		put(
-			"e",
-			new HashMap<String, Object>() {{
-				put("e", Boolean.TYPE);
-			}}
-		);
-		put(
-			"f",
-			new HashMap<String, Object>() {{
-				put(
-					"f",
-					new HashMap<String, Object>() {{
-						put("f", List.class);
-					}}
-				);
-			}}
-		);
+		put("e", new HashMap<String, Object>() {{
+			put("e", Boolean.TYPE);
+		}});
+		put("f", new HashMap<String, Object>() {{
+			put("f", new HashMap<String, Object>() {{
+				put("f", List.class);
+			}});
+		}});
 		put("g", Map.class);
 	}};
 

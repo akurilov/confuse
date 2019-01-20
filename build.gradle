@@ -11,11 +11,11 @@ allprojects {
 	apply plugin: "maven"
 	apply plugin: "signing"
 	group = "com.github.akurilov"
-	version = "1.1.2"
+	version = "1.2.0"
 }
 
 ext {
-
+	moduleName = "com.github.akurilov.confuse"
 }
 
 repositories {
@@ -23,32 +23,55 @@ repositories {
 }
 
 dependencies {
-	compile("com.github.akurilov:java-commons:[2.1.2,)")
+	compile("com.github.akurilov:java-commons:2.2.0")
 	testCompile("junit:junit:4.12")
 }
 
 compileJava {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+	inputs.property("moduleName", moduleName)
+	doFirst {
+		options.compilerArgs = [
+			'--module-path', classpath.asPath,
+		]
+		classpath = files()
+	}
 }
 
 compileTestJava {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+	inputs.property("moduleName", moduleName)
+	doFirst {
+		options.compilerArgs = [
+			'--module-path', classpath.asPath,
+			'--add-modules', 'junit',
+			'--add-reads', "$moduleName=junit",
+			'--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+		]
+		classpath = files()
+	}
 }
 
 jar {
 	manifest {
 		attributes (
+			"Automatic-Module-Name": moduleName,
 			"Implementation-Version": version,
 			"Implementation-Title": rootProject.name,
 		)
 	}
+	inputs.property("moduleName", moduleName)
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = "sources"
 	from sourceSets.main.allSource
+}
+
+javadoc {
+	options.addStringOption("-module-path", classpath.asPath)
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -63,6 +86,16 @@ artifacts {
 }
 
 test {
+	inputs.property("moduleName", moduleName)
+	doFirst {
+		jvmArgs = [
+			'--module-path', classpath.asPath,
+			'--add-modules', 'ALL-MODULE-PATH',
+			'--add-reads', "$moduleName=junit",
+			'--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+		]
+		classpath = files()
+	}
 	jvmArgs "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 	jvmArgs "-XX:MaxDirectMemorySize=1g"
 	jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
@@ -143,10 +176,6 @@ uploadArchives {
 			}
 		}
 	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = "4.6"
 }
 
 task printVersion {
